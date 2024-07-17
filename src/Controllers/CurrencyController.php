@@ -3,7 +3,7 @@
 
     use Models\Currency;
 
-    class CurrencysController {
+    class CurrencyController {
         private $currency;
         public function __construct($db) {
             $this->currency = new Currency($db);
