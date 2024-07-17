@@ -2,9 +2,9 @@
     namespace Models;
 
     class ExchangeRate extends Record {
-        public function __construct($db, $table) {
+        public function __construct($db) {
             parent::__construct($db);
-            $this->table = $table;
+            $this->table = "ExchangeRates";
         }
 
         public function create($baseCurrencyID, $targetCurrencyID, $rate) {
@@ -18,15 +18,25 @@
             return $statement->execute();
         }
 
-        public function read($baseCurrencyID, $targetCurrencyID) {
-            $query = "SELECT * FROM " . $this->table . " WHERE (BaseCurrencyID = :baseCurrencyID AND TargetCurrencyID = :targetCurrencyID)";
+        public function read($baseCurrencyID = null, $targetCurrencyID = null) {
+            if ($baseCurrencyID != null && $targetCurrencyID != null) {
+                $query = "SELECT * FROM " . $this->table . " WHERE (BaseCurrencyID = :baseCurrencyID AND TargetCurrencyID = :targetCurrencyID)";
 
-            $statement = $this->db->prepare($query);
-            $statement->bindParam(":baseCurrencyID", $baseCurrencyID);
-            $statement->bindParam(":targetCurrencyID", $targetCurrencyID);
-            $statement->execute();
+                $statement = $this->db->prepare($query);
+                $statement->bindParam(":baseCurrencyID", $baseCurrencyID);
+                $statement->bindParam(":targetCurrencyID", $targetCurrencyID);
+                $statement->execute();
+    
+                return $statement->fetch(\PDO::FETCH_ASSOC);
+            }
+            else {
+                $query = "SELECT * FROM " . $this->table;
 
-            return $statement->fetch(PDO::FETCH_ASSOC);
+                $statement = $this->db->prepare($query);
+                $statement->execute();
+    
+                return $statement->fetchAll(\PDO::FETCH_ASSOC);
+            }
         }
 
         public function update($id, $baseCurrencyID, $targetCurrencyID, $rate) {
@@ -39,6 +49,7 @@
             $statement->bindParam(":rate", $rate);
 
             return $statement->execute();
+                                
         }
     }
 ?>

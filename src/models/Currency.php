@@ -1,6 +1,8 @@
 <?php
     namespace Models;
-
+    require_once 'Models/Record.php';
+    require_once 'Config/Database.php';
+    
     class Currency extends Record {
         public function __construct($db) {
             parent::__construct($db);
@@ -18,14 +20,25 @@
             return $statement->execute();
         }
 
-        public function read($code) {
-            $query = "SELECT * FROM " . $this->table . " WHERE Code = :code";
+        public function read($code = null) {
+            if ($code != null) {
+                $query = "SELECT * FROM " . $this->table . " WHERE Code = :code";
 
-            $statement = $this->db->prepare($query);
-            $statement->bindParam(":code", $code);
-            $statement->execute();
+                $statement = $this->db->prepare($query);
+                $statement->bindParam(":code", $code);
+                $statement->execute();
 
-            return $statement->fetch(PDO::FETCH_ASSOC);
+                return $statement->fetch(\PDO::FETCH_ASSOC);
+            } 
+            else {
+                $query = "SELECT * FROM " . $this->table;
+
+                $statement = $this->db->prepare($query);
+                $statement->execute();
+
+                return $statement->fetchAll(\PDO::FETCH_ASSOC);
+            }
+
         }
 
         public function update($id, $code, $fullName, $sign) {
