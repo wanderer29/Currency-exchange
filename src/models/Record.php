@@ -1,4 +1,6 @@
 <?php
+    namespace Models;
+
     abstract class Record {
         protected $db;
         protected $table;

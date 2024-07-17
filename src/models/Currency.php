@@ -1,4 +1,6 @@
 <?php
+    namespace Models;
+
     class Currency extends Record {
         public function __construct($db) {
             parent::__construct($db);

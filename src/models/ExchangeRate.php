@@ -1,4 +1,6 @@
 <?php
+    namespace Models;
+
     class ExchangeRate extends Record {
         public function __construct($db, $table) {
             parent::__construct($db);
