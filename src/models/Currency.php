@@ -6,7 +6,7 @@
         }
 
         public function create($code, $fullName, $sign) {
-            $query = "INSERT INTO " . $this->table . "(Code, FullName, Sign)" . "(:code, :fullName, :sign)";
+            $query = "INSERT INTO " . $this->table . " (Code, FullName, Sign)" . "(:code, :fullName, :sign)";
             
             $statement = $this->db->prepare($query);
             $statement->bindParam(":code", $code);
@@ -17,7 +17,7 @@
         }
 
         public function read($code) {
-            $query = "SELECT * FROM " . $this->table . "WHERE Code = :code";
+            $query = "SELECT * FROM " . $this->table . " WHERE Code = :code";
 
             $statement = $this->db->prepare($query);
             $statement->bindParam(":code", $code);
