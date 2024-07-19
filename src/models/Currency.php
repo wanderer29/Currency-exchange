@@ -63,5 +63,14 @@
 
             return $statement->execute();
         }
+
+        public function getIdByCode($code) {
+            $query = "SELECT ID FROM " . $this->table . " WHERE Code = :code";
+            $statement = $this->db->prepare($query);
+            $statement->bindParam(":code", $code);
+            $statement->execute();
+            
+            return $statement->fetchColumn();
+        }
     }
 ?>

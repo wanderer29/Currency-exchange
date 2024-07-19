@@ -31,5 +31,8 @@
             return false;
         }
         
+        public function getCurrencyIdByCode($code) {
+            return $this->currency->getIdByCode($code);
+        }
     }
 ?>

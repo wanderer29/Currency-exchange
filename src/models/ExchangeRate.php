@@ -8,7 +8,7 @@
         }
 
         public function create($baseCurrencyID, $targetCurrencyID, $rate) {
-            $query = "INSERT INTO " . $this->table . " (BaseCurrencyID, TargetCurrencyID, Rate) ". "(:baseCurrencyID, :targetCurrencyID, :rate";
+            $query = "INSERT INTO " . $this->table . " (BaseCurrencyID, TargetCurrencyID, Rate) ". "(:baseCurrencyID, :targetCurrencyID, :rate)";
             
             $statement = $this->db->prepare($query);
             $statement->bindParam(":baseCurrencyID", $baseCurrencyID);

@@ -87,7 +87,9 @@
             else if (count($path) == 2) {
                 switch($requestMethod) {
                     case "GET":
-                        echo json_encode($this->exchangeRateController->read(substr($path[1], 0, 2), substr($path[1], 3, 3)));
+                        $baseId = $this->currencyController->getCurrencyIdByCode(substr($path[1], 0, 3));
+                        $targetId = $this->currencyController->getCurrencyIdByCode(substr($path[1], 3, 3));
+                        echo json_encode($this->exchangeRateController->read($baseId, $targetId));
                         break;
                     default:
                         http_response_code(405);

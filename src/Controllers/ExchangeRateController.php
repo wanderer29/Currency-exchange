@@ -2,6 +2,7 @@
     namespace Controllers;
 
     require_once __DIR__ . '/../Models/ExchangeRate.php';
+    
     use Models\ExchangeRate;
     
     class ExchangeRateController {
@@ -20,7 +21,7 @@
         }
 
         public function read($baseCurrencyID = null, $targetCurrencyID = null) {
-            return $this->read($baseCurrencyID, $targetCurrencyID);
+            return $this->exchangeRate->read($baseCurrencyID, $targetCurrencyID);
         }
 
         public function update($id, $data) {
