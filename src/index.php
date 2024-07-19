@@ -7,14 +7,12 @@ use Models\Currency;
 
     require_once 'Config/Database.php';
     require_once 'Models/Currency.php';
-    
-    $db = new Config\Database();
-    $db = $db->connect();
-    
-    $currency = new Currency($db);
+    require_once 'Routes/Api.php';
+    require_once __DIR__ . '/vendor/autoload.php';
 
-    foreach ($currency->read() as $currency) {
-        echo implode($currency) . "\n";
-    }
+    use Routes\Api;
+    
+    $api = new Api();
+    $api->handleRequest()
 
 ?>

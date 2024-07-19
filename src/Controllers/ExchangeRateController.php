@@ -1,6 +1,7 @@
 <?php
     namespace Controllers;
 
+    require_once __DIR__ . '/../Models/ExchangeRate.php';
     use Models\ExchangeRate;
     
     class ExchangeRateController {

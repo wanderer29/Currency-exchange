@@ -9,9 +9,13 @@
             $this->currency = new Currency($db);
         }
 
-        public function create($data) {
-            if (isset($data["code"]) && isset($data["fullName"]) && isset($data["sign"])) {
-                return $this->currency->create($data["code"], $data["fullName"], $data["sign"]);
+        public function create() {
+            if (isset($_POST["code"]) && isset($_POST["name"]) && isset($_POST["sign"])) {
+                $code = $_POST["code"];
+                $name = $_POST["name"];
+                $sign = $_POST["sign"];
+                
+                return $this->currency->create($code, $name, $sign);
             }
             return false;
         }

@@ -10,14 +10,25 @@
         }
 
         public function create($code, $fullName, $sign) {
-            $query = "INSERT INTO " . $this->table . " (Code, FullName, Sign)" . "(:code, :fullName, :sign)";
+            // $query = "INSERT INTO " . $this->table . " (Code, FullName, Sign)" . "(:code, :fullName, :sign)";
             
-            $statement = $this->db->prepare($query);
-            $statement->bindParam(":code", $code);
-            $statement->bindParam(":fullName", $fullName);
-            $statement->bindParam(":sign", $sign);
+            // $statement = $this->db->prepare($query);
+            // $statement->bindParam(":code", $code);
+            // $statement->bindParam(":fullName", $fullName);
+            // $statement->bindParam(":sign", $sign);
 
-            return $statement->execute();
+            // return $statement->execute();
+
+            $statement = $this->db->prepare("INSERT INTO currencies (code, fullName, sign) VALUES (?, ?, ?)");
+            $statement->bindParam(1, $code);
+            $statement->bindParam(2, $fullName);
+            $statement->bindParam(3, $sign);
+
+            if ($statement->execute()) {
+                return $this->read($code);
+            }
+            
+            return false;
         }
 
         public function read($code = null) {
