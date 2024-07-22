@@ -23,11 +23,10 @@
                     $baseCurrencyId = $this->currency->getIdByCode($_POST["baseCurrencyCode"]);
                     $targetCurrencyId = $this->currency->getIdByCode($_POST["targetCurrencyCode"]);
                     $rate = $_POST["rate"];
-
                     return $this->exchangeRate->create($baseCurrencyId, $targetCurrencyId, $rate);
                 }
                 catch (\Exception $e) {
-                    echo "Error ". $e->getMessage() ." Code is incorrect";
+                    echo "Error ". $e->getMessage() ." incorrect parameters";
                 }
             }
             return false;            

@@ -8,14 +8,25 @@
         }
 
         public function create($baseCurrencyID, $targetCurrencyID, $rate) {
-            $query = "INSERT INTO " . $this->table . " (BaseCurrencyID, TargetCurrencyID, Rate) ". "(:baseCurrencyID, :targetCurrencyID, :rate)";
+            $statement = $this->db->prepare("INSERT INTO " . $this->table . " (baseCurrencyId, targetCurrencyID, rate) VALUES (?, ?, ?)");
+            $statement->bindParam(1, $baseCurrencyID);
+            $statement->bindParam(2, $targetCurrencyID);
+            $statement->bindParam(3, $rate);
+
+            if ($statement->execute()) {
+                return $this->read($baseCurrencyID, $targetCurrencyID);
+            }
             
-            $statement = $this->db->prepare($query);
-            $statement->bindParam(":baseCurrencyID", $baseCurrencyID);
-            $statement->bindParam(":targetCurrencyID", $targetCurrencyID);
-            $statement->bindParam(":rate", $rate);
+            return false;
+
+            // $query = "INSERT INTO " . $this->table . " (BaseCurrencyID, TargetCurrencyID, Rate) ". "(:baseCurrencyID, :targetCurrencyID, :rate)";
             
-            return $statement->execute();
+            // $statement = $this->db->prepare($query);
+            // $statement->bindParam(":baseCurrencyID", $baseCurrencyID);
+            // $statement->bindParam(":targetCurrencyID", $targetCurrencyID);
+            // $statement->bindParam(":rate", $rate);
+            
+            // return $statement->execute();
         }
 
         public function read($baseCurrencyID = null, $targetCurrencyID = null) {
