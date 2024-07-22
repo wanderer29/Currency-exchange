@@ -2,22 +2,35 @@
     namespace Controllers;
 
     require_once __DIR__ . '/../Models/ExchangeRate.php';
+    require_once __DIR__ . '/../Models/Currency.php';
     
     use Models\ExchangeRate;
+    use Models\Currency;
     
     class ExchangeRateController {
 
         private $exchangeRate;
+        private $currency;
 
         public function __construct($db) {
             $this->exchangeRate = new ExchangeRate($db);
+            $this->currency = new Currency($db);
         }
 
-        public function create($data) {
-            if (isset($data["baseCurrencyID"]) && isset($data["targetCurrencyID"]) && isset($data["rate"])) {
-                return $this->exchangeRate->create($data["baseCurrencyID"], $data["targetCurrencyID"], $data["rate"]);
+        public function create() {
+            if (isset($_POST["baseCurrencyCode"]) && isset($_POST["targetCurrencyCode"]) && isset($_POST["rate"])) {
+                try {
+                    $baseCurrencyId = $this->currency->getIdByCode($_POST["baseCurrencyCode"]);
+                    $targetCurrencyId = $this->currency->getIdByCode($_POST["targetCurrencyCode"]);
+                    $rate = $_POST["rate"];
+
+                    return $this->exchangeRate->create($baseCurrencyId, $targetCurrencyId, $rate);
+                }
+                catch (\Exception $e) {
+                    echo "Error ". $e->getMessage() ." Code is incorrect";
+                }
             }
-            return false;
+            return false;            
         }
 
         public function read($baseCurrencyID = null, $targetCurrencyID = null) {

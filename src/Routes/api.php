@@ -74,9 +74,8 @@
                         echo json_encode($this->exchangeRateController->read());
                         break;
                     case "POST":
-                        $data = json_decode(file_get_contents("php://input"), true);
-                        $result = $this->exchangeRateController->create($data);
-                        echo json_encode(["Result"=> $result]);
+                        $result = $this->exchangeRateController->create();
+                        echo json_encode($result);
                         break;
                     default:
                         http_response_code(405);
