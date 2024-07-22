@@ -36,9 +36,11 @@
             return $this->exchangeRate->read($baseCurrencyID, $targetCurrencyID);
         }
 
-        public function update($id, $data) {
-            if (isset($data["baseCurrencyID"]) && isset($data["targetCurrencyID"]) && isset($data["rate"])) {
-                return $this->exchangeRate->update($id, $data["baseCurrencyID"], $data["targetCurrencyID"], $data["rate"]);
+        public function update($baseCurrencyID, $targetCurrencyID) {
+            $input = file_get_contents("php://input");
+            parse_str($input, $data);
+            if (isset($baseCurrencyID) && isset($targetCurrencyID) && isset($data["rate"])) {
+                return $this->exchangeRate->update($baseCurrencyID, $targetCurrencyID, $data["rate"]);
             }
             return false;
         }

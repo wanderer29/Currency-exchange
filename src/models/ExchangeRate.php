@@ -50,17 +50,16 @@
             }
         }
 
-        public function update($id, $baseCurrencyID, $targetCurrencyID, $rate) {
-            $query = "UPDATE " . $this->table . " SET BaseCurrencyID = :baseCurrencyID, TargetCurrencyID = :targetCurrencyID, Rate = :rate WHERE ID = :id";
+        public function update($baseCurrencyID, $targetCurrencyID, $rate) {
+            $query = "UPDATE " . $this->table . " SET Rate = :rate WHERE (BaseCurrencyID = :baseCurrencyID AND TargetCurrencyID = :targetCurrencyID)";
 
             $statement = $this->db->prepare($query);
-            $statement->bindParam(":id", $id);
             $statement->bindParam(":baseCurrencyID", $baseCurrencyID);
             $statement->bindParam(":targetCurrencyID", $targetCurrencyID);
             $statement->bindParam(":rate", $rate);
+            $statement->execute();  
 
-            return $statement->execute();
-                                
+            return $this->read($baseCurrencyID, $targetCurrencyID);                    
         }
     }
 ?>

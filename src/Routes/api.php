@@ -90,6 +90,12 @@
                         $targetId = $this->currencyController->getCurrencyIdByCode(substr($path[1], 3, 3));
                         echo json_encode($this->exchangeRateController->read($baseId, $targetId));
                         break;
+                    case "PATCH":
+                        $baseId = $this->currencyController->getCurrencyIdByCode(substr($path[1], 0, 3));
+                        $targetId = $this->currencyController->getCurrencyIdByCode(substr($path[1], 3, 3));
+                        $result = $this->exchangeRateController->update($baseId, $targetId);
+                        echo json_encode($result);
+                        break;
                     default:
                         http_response_code(405);
                         echo json_encode(["Error"=> "Method not allowed"]);
