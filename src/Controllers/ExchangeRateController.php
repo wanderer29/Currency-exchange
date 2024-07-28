@@ -45,5 +45,59 @@
             return false;
         }
 
+        public function convert($fromCode, $toCode, $amount) {
+            $fromId = $this->currency->getIdByCode($fromCode);
+            $toId = $this->currency->getIdByCode($toCode);
+            $usdId = $this->currency->getIdByCode("USD");
+
+            if ($this->read($fromId, $toId)) {
+                $exchangeRate = $this->read($fromId, $toId);
+                $rate = $exchangeRate["Rate"];
+                $convertedAmount = $amount * $rate;
+
+                return [
+                    "from" => $fromCode,
+                    "to"=> $toCode,
+                    "rate"=> $rate,
+                    "amount"=> $amount,
+                    "convertedAmount"=> $convertedAmount
+                ];
+            }
+            else if ($this->read($toId, $fromId)) {
+                $exchangeRate = $this->read($toId, $fromId);
+                $rate = $exchangeRate["Rate"];
+                $rate = 1 / $rate;
+                $convertedAmount = $amount * $rate;
+
+                return [
+                    "from" => $fromCode,
+                    "to"=> $toCode,
+                    "rate"=> round($rate, 2),
+                    "amount"=> $amount,
+                    "convertedAmount"=> round($convertedAmount, 2)
+                ];
+            }
+            else if ($this->read($usdId, $fromId) && $this->read($usdId, $toId)) {
+                $exchangeRateFrom = $this->read($usdId, $fromId);
+                $exchangeRateTo = $this->read($usdId, $toId);
+                $rateFrom = $exchangeRateFrom["Rate"];
+                $rateTo = $exchangeRateTo["Rate"];
+                $rate = $rateTo / $rateFrom;
+                $convertedAmount = $amount * $rate;
+
+                return [
+                    "from" => $fromCode,
+                    "to"=> $toCode,
+                    "rate"=> round($rate, 2),
+                    "amount"=> $amount,
+                    "convertedAmount"=> round($convertedAmount, 2)
+                ];
+            }
+            else {
+                http_response_code(404);
+                return ["Error" => "Exchange rate not found"];
+            }
+        }
+
     }
 ?>

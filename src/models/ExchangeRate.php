@@ -30,24 +30,31 @@
         }
 
         public function read($baseCurrencyID = null, $targetCurrencyID = null) {
-            if ($baseCurrencyID != null && $targetCurrencyID != null) {
-                $query = "SELECT * FROM " . $this->table . " WHERE (BaseCurrencyID = :baseCurrencyID AND TargetCurrencyID = :targetCurrencyID)";
-
-                $statement = $this->db->prepare($query);
-                $statement->bindParam(":baseCurrencyID", $baseCurrencyID);
-                $statement->bindParam(":targetCurrencyID", $targetCurrencyID);
-                $statement->execute();
+            try {
+                if ($baseCurrencyID != null && $targetCurrencyID != null) {
+                    $query = "SELECT * FROM " . $this->table . " WHERE (BaseCurrencyID = :baseCurrencyID AND TargetCurrencyID = :targetCurrencyID)";
     
-                return $statement->fetch(\PDO::FETCH_ASSOC);
-            }
-            else {
-                $query = "SELECT * FROM " . $this->table;
-
-                $statement = $this->db->prepare($query);
-                $statement->execute();
+                    $statement = $this->db->prepare($query);
+                    $statement->bindParam(":baseCurrencyID", $baseCurrencyID);
+                    $statement->bindParam(":targetCurrencyID", $targetCurrencyID);
+                    $statement->execute();
+        
+                    return $statement->fetch(\PDO::FETCH_ASSOC);
+                }
+                else {
+                    $query = "SELECT * FROM " . $this->table;
     
-                return $statement->fetchAll(\PDO::FETCH_ASSOC);
+                    $statement = $this->db->prepare($query);
+                    $statement->execute();
+        
+                    return $statement->fetchAll(\PDO::FETCH_ASSOC);
+                }
             }
+            catch (\PDOException $e) {
+                http_response_code(500);
+                echo $e->getMessage();
+            }
+            
         }
 
         public function update($baseCurrencyID, $targetCurrencyID, $rate) {
