@@ -6,6 +6,7 @@
     
     use Models\ExchangeRate;
     use Models\Currency;
+    use Exceptions\ExchangeRateNotFoundException;
     
     class ExchangeRateController {
 
@@ -18,31 +19,48 @@
         }
 
         public function create() {
-            if (isset($_POST["baseCurrencyCode"]) && isset($_POST["targetCurrencyCode"]) && isset($_POST["rate"])) {
-                try {
-                    $baseCurrencyId = $this->currency->getIdByCode($_POST["baseCurrencyCode"]);
-                    $targetCurrencyId = $this->currency->getIdByCode($_POST["targetCurrencyCode"]);
-                    $rate = $_POST["rate"];
-                    return $this->exchangeRate->create($baseCurrencyId, $targetCurrencyId, $rate);
-                }
-                catch (\Exception $e) {
-                    echo "Error ". $e->getMessage() ." incorrect parameters";
-                }
+            if (!isset($_POST["baseCurrencyCode"]) || !isset($_POST["targetCurrencyCode"]) || !isset($_POST["rate"])) {
+                throw new \InvalidArgumentException("Missing required form field");
             }
-            return false;            
+            try {
+                $baseCurrencyId = $this->currency->getIdByCode($_POST["baseCurrencyCode"]);
+                $targetCurrencyId = $this->currency->getIdByCode($_POST["targetCurrencyCode"]);
+                $rate = $_POST["rate"];
+                return $this->exchangeRate->create($baseCurrencyId, $targetCurrencyId, $rate);
+            }
+            catch (\Exception $e) {
+                throw new \Exception("Database error");
+            }        
         }
 
         public function read($baseCurrencyID = null, $targetCurrencyID = null) {
-            return $this->exchangeRate->read($baseCurrencyID, $targetCurrencyID);
+            try {
+                $data = $this->exchangeRate->read($baseCurrencyID, $targetCurrencyID);
+                if (!$data) {
+                    throw new ExchangeRateNotFoundException("Exchange rate not found for the given currency pair");
+                }
+                return $data;
+            } catch (\Exception $e) {
+                throw new \Exception("DB error");
+            }
         }
 
         public function update($baseCurrencyID, $targetCurrencyID) {
-            $input = file_get_contents("php://input");
-            parse_str($input, $data);
-            if (isset($baseCurrencyID) && isset($targetCurrencyID) && isset($data["rate"])) {
-                return $this->exchangeRate->update($baseCurrencyID, $targetCurrencyID, $data["rate"]);
+            try {
+                if (!isset($_POST["rate"])) {
+                    throw new \InvalidArgumentException("Missing required form field");
+                }
+
+                $input = file_get_contents("php://input");
+                parse_str($input, $data);
+                if (isset($baseCurrencyID) && isset($targetCurrencyID) && isset($data["rate"])) {
+                    return $this->exchangeRate->update($baseCurrencyID, $targetCurrencyID, $data["rate"]);
+                }
+                return false;
             }
-            return false;
+            catch (\Exception $e) {
+                throw new \Exception("DB error");
+            }
         }
 
         public function convert($fromCode, $toCode, $amount) {

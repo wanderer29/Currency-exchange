@@ -8,6 +8,11 @@
     use Config\Database;
     use Controllers\CurrencyController;
     use Controllers\ExchangeRateController;
+    use Exceptions\CurrencyNotFoundException;
+    use Exceptions\CurrencyAlreadyExistsException;
+    use Exceptions\MissingFieldException;
+    use Exceptions\ExchangeRateNotFoundException;
+
 
     class Api {
         private $db;
@@ -44,99 +49,140 @@
         }
 
         private function handleCurrencies($requestMethod, $path) {
-            if (count($path) == 1) {
-                switch($requestMethod) {
-                    case "GET": 
-                        echo json_encode($this->currencyController->read());
-                        break;
-                    case "POST":
-                        $result = $this->currencyController->create();
-                        echo json_encode($result);
-                        break;
-                    default:
-                        http_response_code(405);
-                        echo json_encode(["Error" => "Method not allowed"]);
-                        break;
+            try {
+                if (count($path) == 1) {
+                    switch($requestMethod) {
+                        case "GET": 
+                            echo json_encode($this->currencyController->read());
+                            http_response_code(200);
+                            break;
+                        case "POST":
+                            $result = $this->currencyController->create();
+                            http_response_code(201);
+                            echo json_encode($result);
+                            break;
+                        default:
+                            http_response_code(405);
+                            echo json_encode(["Error" => "Method not allowed"]);
+                            break;
+                    }
                 }
-            }
-            else if (count($path) == 2) {
-                switch($requestMethod) {
-                    case "GET":
-                        if ($path[1]) {
+                else if (count($path) == 2) {
+                    switch($requestMethod) {
+                        case "GET":
                             echo json_encode($this->currencyController->read($path[1]));
-                        }
-                        else {
-                            http_response_code(400);
-                            echo "Missing currency code";    
-                        }
-                        break;
-                    default:
-                        http_response_code(405);
-                        echo json_encode(["Error" => "Method not allowed"]);
-                        break;
+                            http_response_code(200);
+                            break;
+                        default:
+                            http_response_code(405);
+                            echo json_encode(["Error" => "Method not allowed"]);
+                            break;
+                    }
                 }
+            } catch (CurrencyNotFoundException $e) {
+                http_response_code(404);
+                echo json_encode(["Error" => $e->getMessage()]);
+            }
+            catch (CurrencyAlreadyExistsException $e) {
+                http_response_code(409);
+                echo json_encode(["Error" => $e->getMessage()]);
+            }
+            catch (MissingFieldException $e) {
+                http_response_code(400);
+                echo json_encode(["Error" => $e->getMessage()]);
+            }
+             catch (\Exception $e) {
+                http_response_code(500);
+                echo json_encode(["Error" => $e->getMessage()]);
             }
         }
 
         private function handleExchangeRates($requestMethod, $path) {
-            if (count($path) == 1) {
-                switch($requestMethod) {
-                    case "GET":
-                        echo json_encode($this->exchangeRateController->read());
-                        break;
-                    case "POST":
-                        $result = $this->exchangeRateController->create();
-                        echo json_encode($result);
-                        break;
-                    default:
-                        http_response_code(405);
-                        echo json_encode(["Error"=> "Method not allowed"]);
-                        break;
+            try {
+                if (count($path) == 1) {
+                    switch($requestMethod) {
+                        case "GET":
+                            echo json_encode($this->exchangeRateController->read());
+                            http_response_code(200);
+                            break;
+                        case "POST":
+                            $result = $this->exchangeRateController->create();
+                            http_response_code(201);
+                            echo json_encode($result);
+                            break;
+                        default:
+                            http_response_code(405);
+                            echo json_encode(["Error"=> "Method not allowed"]);
+                            break;
+                    }
+                }
+                else if (count($path) == 2) {
+                    switch($requestMethod) {
+                        case "GET":
+                            $baseId = $this->currencyController->getCurrencyIdByCode(substr($path[1], 0, 3));
+                            $targetId = $this->currencyController->getCurrencyIdByCode(substr($path[1], 3, 3));
+    
+                            echo json_encode($this->exchangeRateController->read($baseId, $targetId));
+                            http_response_code(200);
+                            break;
+                        case "PATCH":
+                            $baseId = $this->currencyController->getCurrencyIdByCode(substr($path[1], 0, 3));
+                            $targetId = $this->currencyController->getCurrencyIdByCode(substr($path[1], 3, 3));
+                            $result = $this->exchangeRateController->update($baseId, $targetId);
+                            http_response_code(200);
+                            echo json_encode($result);
+                            break;
+                        default:
+                            http_response_code(405);
+                            echo json_encode(["Error"=> "Method not allowed"]);
+                            break;
+                    }
                 }
             }
-            else if (count($path) == 2) {
-                switch($requestMethod) {
-                    case "GET":
-                        $baseId = $this->currencyController->getCurrencyIdByCode(substr($path[1], 0, 3));
-                        $targetId = $this->currencyController->getCurrencyIdByCode(substr($path[1], 3, 3));
-                        echo json_encode($this->exchangeRateController->read($baseId, $targetId));
-                        break;
-                    case "PATCH":
-                        $baseId = $this->currencyController->getCurrencyIdByCode(substr($path[1], 0, 3));
-                        $targetId = $this->currencyController->getCurrencyIdByCode(substr($path[1], 3, 3));
-                        $result = $this->exchangeRateController->update($baseId, $targetId);
-                        echo json_encode($result);
-                        break;
-                    default:
-                        http_response_code(405);
-                        echo json_encode(["Error"=> "Method not allowed"]);
-                        break;
-                }
+            catch (ExchangeRateNotFoundException $e) {
+                http_response_code(404);
+                echo json_encode(["Error" => $e->getMessage()]);
             }
-            else {
-                http_response_code(405);
-                echo json_encode(["Error" => "Endpoint not allowed"]);
-                   
+            catch (\Exception $e) {
+                http_response_code(500);
+                echo json_encode(["Error" => $e->getMessage()]);
+            }
+            catch (\InvalidArgumentException $e) {
+                http_response_code(400);
+                echo json_encode(["Error" => $e->getMessage()]);
             }
         }
 
         private function handleExchange($requestMethod) {
-            switch($requestMethod) {
-                case "GET":
-                    if (isset($_GET['from']) && isset($_GET['to']) && isset($_GET['amount'])) {
-                        $from = $_GET['from'];
-                        $to = $_GET['to'];
-                        $amount = $_GET['amount'];
-                        echo json_encode($this->exchangeRateController->convert($from, $to, $amount));
-                    } else {
-                        http_response_code(400);
-                        echo json_encode(["Error" => "Missing required query parameters"]);
-                    }
-                    break;
-                default:
-                    http_response_code(405);
-                    echo json_encode(["Error"=> "Method not allowed"]);
-                    break;
+            try {
+                switch($requestMethod) {
+                    case "GET":
+                        if (isset($_GET['from']) && isset($_GET['to']) && isset($_GET['amount'])) {
+                            $from = $_GET['from'];
+                            $to = $_GET['to'];
+                            $amount = $_GET['amount'];
+
+                            if (strlen($from) !== 3 || strlen($to) !== 3 || !is_numeric($amount) || $amount <= 0) {
+                                http_response_code(400);
+                                echo json_encode(["message" => "Invalid input values"]);
+                                return;
+                            }
+                            
+                            http_response_code(200);
+                            echo json_encode($this->exchangeRateController->convert($from, $to, $amount));
+                        } else {
+                            http_response_code(400);
+                            echo json_encode(["Error" => "Missing required query parameters"]);
+                        }
+                        break;
+                    default:
+                        http_response_code(405);
+                        echo json_encode(["Error"=> "Method not allowed"]);
+                        break;
+                }
+            } catch (\Exception $e) {
+                http_response_code(500);
+                echo json_encode(["Error" => $e->getMessage()]);
             }
         }
         
