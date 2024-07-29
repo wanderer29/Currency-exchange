@@ -3,8 +3,6 @@
     require_once 'Models/Record.php';
     require_once 'Config/Database.php';
     require_once 'Exceptions/ElementNotFoundException.php';
-
-    use Exceptions\ElementNotFoundException;
     
     class Currency extends Record {
         public function __construct($db) {

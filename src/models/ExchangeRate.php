@@ -16,17 +16,8 @@
             if ($statement->execute()) {
                 return $this->read($baseCurrencyID, $targetCurrencyID);
             }
-            
             return false;
 
-            // $query = "INSERT INTO " . $this->table . " (BaseCurrencyID, TargetCurrencyID, Rate) ". "(:baseCurrencyID, :targetCurrencyID, :rate)";
-            
-            // $statement = $this->db->prepare($query);
-            // $statement->bindParam(":baseCurrencyID", $baseCurrencyID);
-            // $statement->bindParam(":targetCurrencyID", $targetCurrencyID);
-            // $statement->bindParam(":rate", $rate);
-            
-            // return $statement->execute();
         }
 
         public function read($baseCurrencyID = null, $targetCurrencyID = null) {
