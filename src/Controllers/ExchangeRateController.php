@@ -5,8 +5,7 @@
     require_once __DIR__ . '/../Models/Currency.php';
     
     use Models\ExchangeRate;
-    use Models\Currency;
-    use Exceptions\ExchangeRateNotFoundException;
+    use Models\Currency;  
     
     class ExchangeRateController {
 
@@ -36,9 +35,6 @@
         public function read($baseCurrencyID = null, $targetCurrencyID = null) {
             try {
                 $data = $this->exchangeRate->read($baseCurrencyID, $targetCurrencyID);
-                if (!$data) {
-                    throw new ExchangeRateNotFoundException("Exchange rate not found for the given currency pair");
-                }
                 return $data;
             } catch (\Exception $e) {
                 throw new \Exception("DB error");

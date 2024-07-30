@@ -8,7 +8,6 @@ use Models\Currency;
     require_once 'Config/Database.php';
     require_once 'Models/Currency.php';
     require_once 'Routes/Api.php';
-    require_once __DIR__ . '/vendor/autoload.php';
 
     use Routes\Api;
     
