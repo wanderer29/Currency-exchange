@@ -2,7 +2,6 @@
     namespace Controllers;
 
     use Models\Currency;
-    use Exceptions\CurrencyNotFoundException;
     use Exceptions\CurrencyAlreadyExistsException;
     use Exceptions\MissingFieldException;
 
@@ -47,16 +46,9 @@
                 }
                 else {
                     $currency = $this->currency->read($code);
-                    if (!$currency) {
-                        throw new CurrencyNotFoundException("Currency not found");
-                    }
                     return $currency;
                 }
             } 
-            catch(CurrencyNotFoundException $e) {
-                error_log("Currency not found: " . $e->getMessage());
-                throw $e;
-            }
             catch (\Exception $e) {
                 error_log("DB error: " . $e->getMessage());
                 throw new \Exception("Database error");
