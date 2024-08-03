@@ -79,4 +79,3 @@
             return $statement->fetchColumn();
         }
     }
-?>

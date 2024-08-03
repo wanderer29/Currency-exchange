@@ -13,5 +13,3 @@ use Models\Currency;
     
     $api = new Api();
     $api->handleRequest()
-
-?>

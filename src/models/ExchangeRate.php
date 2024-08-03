@@ -60,4 +60,3 @@
             return $this->read($baseCurrencyID, $targetCurrencyID);                    
         }
     }
-?>

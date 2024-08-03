@@ -66,4 +66,3 @@
             return $this->currency->getIdByCode($code);
         }
     }
-?>
