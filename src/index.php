@@ -1,15 +1,16 @@
 <?php
 use Models\Currency;
-    ini_set('memory_limit', '256M');
-    // require_once "Autoloader.php";
 
-    // Autoloader::register()
+ini_set('memory_limit', '256M');
+// require_once "Autoloader.php";
 
-    require_once 'Config/Database.php';
-    require_once 'Models/Currency.php';
-    require_once 'Routes/Api.php';
+// Autoloader::register()
 
-    use Routes\Api;
+require_once 'Config/Database.php';
+require_once 'Models/Currency.php';
+require_once 'Routes/Api.php';
+
+use Routes\Api;
     
-    $api = new Api();
-    $api->handleRequest()
+$api = new Api();
+$api->handleRequest();

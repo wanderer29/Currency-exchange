@@ -1,10 +1,12 @@
 <?php
-    namespace Models;
+namespace Models;
 
-    abstract class Record {
-        protected $db;
-        protected $table;
-        public function __construct($db) {
-            $this->db = $db;
-        }
-    } 
+abstract class Record
+{
+    protected $db;
+    protected $table;
+    public function __construct($db)
+    {
+        $this->db = $db;
+    }
+}
