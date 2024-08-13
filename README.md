@@ -21,4 +21,3 @@ The project does not include a web interface.
 - Calculation of the transfer of a certain amount of funds from one currency to another: GET /exchange?from=BASE_CURRENCY_CODE&to=TARGET_CURRENCY_CODE&amount=$AMOUNT
 
 
-The application is now available at: http://194.58.126.101:80/
